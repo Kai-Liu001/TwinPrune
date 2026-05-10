@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="title" content="TwinPrune: Density-Aware Two-Phase Token Pruning for Vision-Language Models">
+  <meta name="description" content="TwinPrune uses one spatial-density signal for prefill visual-token merging and decode visual KV eviction in VLMs.">
+  <meta name="keywords" content="vision-language models, token pruning, KV cache, prefill, decode, visual token pruning, density scoring">
+  <meta name="author" content="Kai Liu, Anqi Li, Junxian Li, Zhixin Wang, Zhikai Chen, Renjing Pei, Yulun Zhang">
+  <meta property="og:title" content="TwinPrune: Density-Aware Two-Phase Token Pruning for Vision-Language Models">
+  <meta property="og:description" content="A density-aware two-phase pruning framework for VLM prefill and decode.">
+  <meta property="og:image" content="static/images/fig1_teaser.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TwinPrune">
+  <meta name="twitter:description" content="Density-aware two-phase token pruning for Vision-Language Models.">
+  <meta name="twitter:image" content="static/images/fig1_teaser.png">
+  <title>TwinPrune | Density-Aware Two-Phase Token Pruning</title>
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <style>
+    .paper-figure {
+      display: block;
+      max-width: 900px;
+      width: 100%;
+      height: auto;
+      margin: 1.25rem auto 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    }
+    .figure-medium { max-width: 760px; }
+    .result-table {
+      font-size: 0.86rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .result-table th,
+    .result-table td {
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+    .result-table th:first-child,
+    .result-table td:first-child {
+      text-align: left !important;
+      white-space: nowrap;
+    }
+    .phase-card {
+      height: 100%;
+      border-left: 5px solid #2563eb;
+    }
+    @media screen and (max-width: 768px) {
+      .result-table { font-size: 0.72rem; }
+      .paper-figure { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main id="main-content">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop has-text-centered">
+          <h1 class="title is-1 publication-title">TwinPrune</h1>
+          <h2 class="subtitle is-3 publication-subtitle">Density-Aware Two-Phase Token Pruning for Vision-Language Models</h2>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><a href="https://kai-liu.cn/" target="_blank">Kai Liu</a>,</span>
+            <span class="author-block"><a href="https://github.com/starrywiki" target="_blank">Anqi Li</a>,</span>
+            <span class="author-block"><a href="https://lijunxian111.github.io/" target="_blank">Junxian Li</a>,</span>
+            <span class="author-block">Zhixin Wang,</span>
+            <span class="author-block">Zhikai Chen,</span>
+            <span class="author-block">Renjing Pei,</span>
+            <span class="author-block"><a href="https://yulunzhang.com/" target="_blank">Yulun Zhang</a></span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">arXiv 2026</span>
+          </div>
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="https://github.com/Kai-Liu001/TwinPrune" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                <span>Code</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="#" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                <span>arXiv</span>
+              </a>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero teaser">
+      <div class="container is-max-desktop">
+        <div class="hero-body">
+          <img class="paper-figure" src="static/images/fig1_teaser.png" alt="TwinPrune teaser figure" loading="lazy">
+          <h2 class="subtitle has-text-centered">
+            TwinPrune improves VLM inference by jointly compressing prefill FLOPs and decode KV memory with one density-aware pruning signal.
+          </h2>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            TwinPrune is a density-aware two-phase token pruning framework for Vision-Language Models. It uses a unified spatial-density signal to score token importance in both inference phases: bipartite visual-token merging during prefill and visual KV cache eviction during decode. The paper shows that first-token prefill probes can hide decode-stage failures, while full-pipeline benchmarks such as TextVQA, DocVQA, and MM-Vet expose the real cost of KV pruning. TwinPrune therefore optimizes an honest three-axis Pareto frontier over accuracy, prefill speedup, and decode memory.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered">Method</h2>
+        <img class="paper-figure" src="static/images/fig2_method.png" alt="TwinPrune method" loading="lazy">
+        <div class="columns">
+          <div class="column">
+            <div class="box phase-card">
+              <h3 class="title is-4">Prefill: Density-Guided Bipartite Merge</h3>
+              <p>
+                TwinPrune ranks visual tokens by spatial density and merges redundant low-density tokens through bipartite matching. This reduces prefill FLOPs while preserving high-density visual evidence.
+              </p>
+            </div>
+          </div>
+          <div class="column">
+            <div class="box phase-card">
+              <h3 class="title is-4">Decode: Density-Guided KV Eviction</h3>
+              <p>
+                The same density ranking is reused to keep informative visual KV entries and evict redundant ones during autoregressive decoding, reducing visual KV memory without changing retained RoPE positions.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            The central design choice is <strong>one signal, two phases</strong>: a single spatial-density score controls both the FLOPs lever in prefill and the KV-memory lever in decode. This avoids treating prompt compression and cache compression as unrelated problems.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered">Why Decode Evaluation Matters</h2>
+        <img class="paper-figure figure-medium" src="static/images/fig4.png" alt="Decode sensitivity under visual KV pruning" loading="lazy">
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable is-fullwidth result-table">
+            <thead>
+              <tr>
+                <th>Phase</th>
+                <th>Signal / Keep</th>
+                <th>MMBench</th>
+                <th>POPE</th>
+                <th>SQA</th>
+                <th>TextVQA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Prefill</td><td>Density / 75,50,25%</td><td>0</td><td>0-0.03</td><td>-</td><td>3.1 / 7.0 / 14.9</td></tr>
+              <tr><td>Prefill</td><td>Random / 25%</td><td>0</td><td>0</td><td>-</td><td>32.8</td></tr>
+              <tr><td>Prefill</td><td>Attention / 25%</td><td>0</td><td>0.03</td><td>-</td><td>25.1</td></tr>
+              <tr><td>Decode</td><td>Density / 25,12.5,6.25%</td><td>0.54</td><td>0.32-0.35</td><td>0.20</td><td>15.9 / 23.0 / 31.1</td></tr>
+              <tr><td><strong>Decode</strong></td><td><strong>Density / 0% (drop all)</strong></td><td><strong>0.54</strong></td><td><strong>0.38</strong></td><td><strong>0.20</strong></td><td><strong>45.5</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            MMBench, POPE, and ScienceQA mostly score the first decoded token, so they are insensitive to decode-stage visual KV removal. TextVQA exposes the failure: dropping visual KV entries can sharply hurt full-sequence generation even when prefill probes look stable.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered">Prefill Compression Results</h2>
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable is-fullwidth result-table">
+            <thead>
+              <tr>
+                <th>Setting / Method</th>
+                <th>TPL%</th>
+                <th>MMBench</th>
+                <th>POPE</th>
+                <th>SQA</th>
+                <th>TextVQA</th>
+                <th>Avg-4</th>
+                <th>Speedup</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Baseline</td><td>100.0</td><td>0.8707</td><td>0.8903</td><td>0.9539</td><td>0.6493</td><td>0.8411</td><td>1.00x</td></tr>
+              <tr><td>CAC, low-TPL</td><td>65.2</td><td><strong>0.8909</strong></td><td>0.9142</td><td><strong>0.9792</strong></td><td><strong>0.7195</strong></td><td><strong>0.8759</strong></td><td>1.16x</td></tr>
+              <tr><td>CAC, extreme stress</td><td>24.1</td><td>0.8282</td><td>0.8670</td><td><strong>0.8929</strong></td><td><strong>0.5696</strong></td><td><strong>0.7894</strong></td><td>2.67x</td></tr>
+              <tr><td>CAC, visual-only prune</td><td>20.0</td><td>0.8467</td><td>0.8835</td><td>0.8914</td><td>0.5793</td><td>0.8003</td><td>3.24x</td></tr>
+              <tr><td>CAC + LoRA</td><td>30.0</td><td>0.8514</td><td>0.9058</td><td>0.9321</td><td><strong>0.6385</strong></td><td><strong>0.8319</strong></td><td>2.14x</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            In the prefill phase, density-guided merging preserves accuracy under both moderate and aggressive token budgets, while structurally invalid pruning strategies can collapse under extreme stress.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered">Decode KV Results</h2>
+        <img class="paper-figure" src="static/images/fig3_pareto.png" alt="TwinPrune decode Pareto" loading="lazy">
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable is-fullwidth result-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Method</th>
+                <th colspan="3">TextVQA</th>
+                <th colspan="3">MM-Vet</th>
+                <th colspan="3">DocVQA</th>
+              </tr>
+              <tr>
+                <th>50%</th><th>25%</th><th>12.5%</th>
+                <th>50%</th><th>25%</th><th>12.5%</th>
+                <th>50%</th><th>25%</th><th>12.5%</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Baseline</td><td colspan="3">0.733</td><td colspan="3">0.756</td><td colspan="3">0.642</td></tr>
+              <tr><td>StreamingLLM</td><td>0.637</td><td>0.573</td><td>0.507</td><td>0.667</td><td>0.561</td><td>0.514</td><td>0.468</td><td>0.384</td><td>0.324</td></tr>
+              <tr><td>H2O</td><td>0.697</td><td>0.629</td><td>0.552</td><td>0.662</td><td>0.571</td><td>0.497</td><td>0.555</td><td>0.438</td><td>0.347</td></tr>
+              <tr><td>SnapKV</td><td>0.707</td><td>0.643</td><td>0.573</td><td>0.654</td><td>0.585</td><td>0.513</td><td><strong>0.577</strong></td><td><strong>0.469</strong></td><td>0.377</td></tr>
+              <tr><td>Density (ours)</td><td><strong>0.726</strong></td><td><strong>0.697</strong></td><td><strong>0.648</strong></td><td><strong>0.708</strong></td><td><strong>0.634</strong></td><td><strong>0.551</strong></td><td>0.575</td><td>0.466</td><td><strong>0.382</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="content has-text-justified">
+          <p>
+            During decode, density-guided KV eviction dominates prior cache pruning methods on TextVQA and MM-Vet and remains competitive on DocVQA. The Pareto plot shows that TwinPrune keeps higher accuracy at smaller visual KV cache sizes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="BibTeX">
+      <div class="container is-max-desktop content">
+        <h2 class="title">BibTeX</h2>
+        <pre><code>@article{liu2026twinprune,
+  title   = {TwinPrune: Density-Aware Two-Phase Token Pruning for Vision-Language Models},
+  author  = {Liu, Kai and Li, Anqi and Li, Junxian and Wang, Zhixin and Chen, Zhikai and Pei, Renjing and Zhang, Yulun},
+  journal = {arXiv},
+  year    = {2026}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
