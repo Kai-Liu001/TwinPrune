@@ -1,0 +1,73 @@
+{
+  "scope": "Exact local evaluation exports used in fresh release validation; no dataset content",
+  "benchmarks": {
+    "mmbench": {
+      "MMBench_DEV_EN_V11_real.tsv": {
+        "bytes": 52285836,
+        "sha256": "27a54ae2e8f54502361cc5a41ed5fc35f4253af74734b5593d7b1de545eb5656"
+      }
+    },
+    "pope": {
+      "test-00001-of-00003.parquet": {
+        "bytes": 85003430,
+        "sha256": "6800d7e0d43c7f7eb3e560faee8dd247ac35003f2d43955a29f66ef0dfb2aaa2"
+      },
+      "test-00002-of-00003.parquet": {
+        "bytes": 85012317,
+        "sha256": "f973337fbd2d114aaeeb9b96499b554df17d46654be3ff25aa14d3282c2a9d9a"
+      }
+    },
+    "scienceqa": {
+      "data/test-00000-of-00001.parquet": {
+        "bytes": 134020533,
+        "sha256": "c458c64ac33adcb2df51cdc60eb6711bfd949c79919ffdbc9866129519293b2d"
+      }
+    },
+    "textvqa": {
+      "validation-00000-of-00003.parquet": {
+        "bytes": 310398494,
+        "sha256": "491649b5b8add2c5bde13a1e36707002fcd11898699255d65e2e568ac4fbddff"
+      },
+      "validation-00001-of-00003.parquet": {
+        "bytes": 311190265,
+        "sha256": "909ad12a378217431548a7f4b66fda163a6def9d21e70844c96449e64206c2dd"
+      },
+      "validation-00002-of-00003.parquet": {
+        "bytes": 298732781,
+        "sha256": "a770d03ec95fef58def04cda949d97669b7666caaf174af927856d75684e6fe6"
+      }
+    },
+    "docvqa": {
+      "validation-00000-of-00006.parquet": {
+        "bytes": 114817746,
+        "sha256": "a31507f0b700ac64f3ead52057c5dc3ccfb0baadcc62bc0d19d17159f080a4d8"
+      },
+      "validation-00001-of-00006.parquet": {
+        "bytes": 160435747,
+        "sha256": "ce63ba45f11bfb4e17362f9c073984b4c6c84a0e966ba3d33a86fa285a1fb3dc"
+      },
+      "validation-00002-of-00006.parquet": {
+        "bytes": 184452290,
+        "sha256": "2d580a39996ad05226ad462f2d31bad0df02f0f47f46263d96ad8df584a5667b"
+      },
+      "validation-00003-of-00006.parquet": {
+        "bytes": 177861893,
+        "sha256": "588a587567d1548a174b83b160132d97eb2b12a7d57374675d3c45b431403354"
+      },
+      "validation-00004-of-00006.parquet": {
+        "bytes": 206232388,
+        "sha256": "b43b8aa3e28a1b0f8728243fdf776b798a684b5baafb27d6a734edbbe3983302"
+      },
+      "validation-00005-of-00006.parquet": {
+        "bytes": 212034964,
+        "sha256": "5bba6d5f7b8e6ee0b64df2e4c2885f93cd759c732998e4d6f9b86ce4c690fcf2"
+      }
+    },
+    "mmvet": {
+      "data/test-00000-of-00001.parquet": {
+        "bytes": 67180444,
+        "sha256": "40c51a0d96fdf4a4c813bd429c7b6d984d554accb338504895b7caf9fa70a3f5"
+      }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+# Set paths to your licensed/downloaded benchmark copies.
+mmbench: data/MMBench
+pope: data/pope/data
+scienceqa: data/ScienceQA
+textvqa: data/TextVQA_raw/data
+docvqa: data/DocVQA_raw/DocVQA
+mmvet: data/mmvet
